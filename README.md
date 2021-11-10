@@ -17,8 +17,7 @@ There are in total 16 features used in the prediction model, which can be catego
 6. The 1yr CN yield and 1yr US yield. It reflects the market liquidity and low yield suggests a large liquidity which may drive the commodity price upward.
 ### Output Description
 Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. Therefore, the output in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. Here, we set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
-
-          ![Image of the Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function(1).png)
+            ![Image of the Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function(1).png)
 
 where r is the output, the change in price of the rebar futures price for the next week. 
 To find the well-built model, our group add another regression model to predict the return of the rebar.
