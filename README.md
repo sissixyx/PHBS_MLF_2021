@@ -47,7 +47,7 @@ PPI_I_yoy | Industrial PPI yoy Increase |
 PPI_I_mom | Industrial PPI mom Increase | 
 
 **Note:** Data below Rebar Futures Price are all monthly data evenly distributed to each week. 
-There are in total 72 initial features (the list above only shows parts not including the wow change for the data that we will calculate and fit the model as the input).
+There are in total 70 initial features (the list above only shows parts not including the wow change for the data that we will calculate and fit the model as the input).
 1. Raw materials: the features include the futures price, spot price, consumption volume, and operating rate of the raw materials including iron, ferrosilicon, manganese silicon (Mn-Si), coke, which will influence the output’s price.
 2. Violation of raw materials price: besides what have been listed in the features list, we also calculate the wow return for each raw materials as the input. 
 3. Features of Rebar: The cost and gross profit of rebar reflects the cost from electricity and labor. The trading volume and position of the rebar futures reflects whether there is an abnormal change in the trading volume or the position, it suggests the price of the rebar will be volatile. 
