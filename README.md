@@ -63,8 +63,6 @@ To find the well-built model, our group add another regression model to predict 
 ## Data Preprocessing
 ### Null data filling
 Our group fills the blanks using the linear interpolation.
-### Price transformation
-All the price data are fitted into the model using the weekly growth ratio as well as their original data.
 ### Dimension reduction
 We used PCA method to reduce the dimensions. Specifically, we are concerned about the multicollinearity between the rebar cost, rebar gross profit, and raw materials’ prices. However, the results turn out that PCA did not significantly reduce the dimensions. Furthermore, the performance of the model after PCA applied is worse than without PCA. Therefore, we did not use PCA in the project. 
 The other method we use is the Random Forest and we picked 40 features according to their importance reflected in the Gini Index.
