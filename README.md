@@ -8,13 +8,51 @@ Student Number | Github ID
 Reinforcing bar, or rebar, is a common steel bar that is hot rolled and is used widely in the construction industry, especially for concrete reinforcement. Steel rebar is most used as a tensioning device to reinforce concrete and other masonry structures to help hold the concrete in a compressed state. Since it is widely used in the construction, the price of the rebar is an important indicator of the economy health, and it is also commonly traded in the commodity market. The purpose of the project is to estimate the price trend of the rebar futures based on some fundamental data so that we can make the trading strategies accordingly in a low-mid frequency.
 ## Data Description
 ### Features Description
-There are in total 16 features used in the prediction model, which can be categorized as follows.
-1. The futures price of the raw materials including iron, ferrosilicon, manganese silicon (Mn-Si), coke will influence the output’s price.
-2. The spot price of the raw materials including iron and coke are represented by the import price of iron and coke index.
-3. The cost and gross profit of rebar reflects the cost from electricity and labor. 
-4. The inventory level of the iron ore and the steel reflects the supply demand relationship. The iron ore is the supply of rebar, so its inventory reflects the demand of the rebar. If the inventory level of iron ore is high, the demand of the rebar is low and vise versa. The steel inventory reflects the demand of the rebar. If the steel inventory is low, it suggests the demand for the rebar is high. 
-5. The trading volume and position of the rebar futures. If there is an abnormal change in the trading volume or the position, it suggests the price of the rebar will be volatile. 
-6. The 1yr CN yield and 1yr US yield. It reflects the market liquidity and low yield suggests a large liquidity which may drive the commodity price upward.
+Abbr. | Features | Description
+------------ | ------------- | -------------
+Inv_Steel | Steel Inventory | Reflects rebar demand
+Inv_Iron | Iron Inventory | Reflects rebar demand 
+GP_Rebar | Rebar Gross Profit  | 
+Cost_Rebar | Rebar Cost	 | 
+SP_Rebar | Rebar Spot Price | 
+SP_Iron | Iron Spot Price | Represented by the import price
+FP_FS | Ferrosilicon Futures Price | 
+FP_Mn-Si | Mn-Si Futures Price | 
+FP_Coke | Coke Futures Price | 
+SP_Coke | Coke Sport Price | Represented by the coke index
+FP_Iron | Iron Futures Price | 
+CN1YR | 1 year China yield | 
+US1YR | 1 year US yield | 
+TV_Rebar | Rebar Futures Trading Volumes | Reflects the S-D relationship
+HP_Rebar | Rebar Futures Position | Reflects the S-D relationship
+FP_Rebar | Rebar Futures Price | …of last week
+CV_Steel | Steel Consumption Volume | 
+rCV_Steel | Real Steel Consumption Volume | 
+OR_Steel | Steel Capacity Operating Rate | 
+rCV_Iron | Real Iron Consumption Volume | 
+OR_Iron | Iron Capacity Operating Rate  | 
+CV_Iron | Iron Consumption Volume | 
+rCV_PIron | Real Pig Iron Consumption Volume | 
+rCV_Rebar | Real Rebar Consumption Volume | 
+CV_Rebar | Rebar Consumption Volume | 
+M1 | Money Supply 1 | Includes physical currency, demand deposits, traveler's checks, and other checkable deposits
+M2 | Money Supply 2 | cash, checking deposits, and easily convertible near money
+PPI | Producer Price Index | measures the average change over time in the selling prices received by domestic producers for their output
+CA_REDI | Completed Amount of Real Estate Development Investment | 
+CA_FAI | Completed Amount of Fixed Asset Investment | 
+HCA | Housing Construction Area | 
+CSA | Construction Starts Area | 
+CHSA | Commercial House Sales Area | 
+PPI_I_yoy | Industrial PPI yoy Increase | 
+PPI_I_mom | Industrial PPI mom Increase | 
+
+**Note:** Data below Rebar Futures Price are all monthly data evenly distributed to each week. 
+There are in total 72 initial features (the list above only shows parts not including the wow change for the data that we will calculate and fit the model as the input).
+1. Raw materials: the features include the futures price, spot price, consumption volume, and operating rate of the raw materials including iron, ferrosilicon, manganese silicon (Mn-Si), coke, which will influence the output’s price.
+2. Violation of raw materials price: besides what have been listed in the features list, we also calculate the wow return for each raw materials as the input. 
+3. Features of Rebar: The cost and gross profit of rebar reflects the cost from electricity and labor. The trading volume and position of the rebar futures reflects whether there is an abnormal change in the trading volume or the position, it suggests the price of the rebar will be volatile. 
+4. Demand and supply data: The inventory level of the iron ore and the steel reflects the supply demand relationship. The iron ore is the supply of rebar, so its inventory reflects the demand of the rebar. If the inventory level of iron ore is high, the demand of the rebar is low and vise versa. The steel inventory reflects the demand of the rebar. If the steel inventory is low, it suggests the demand for the rebar is high. The downstream data such as the real-estate and fixed investment also reflects the demand of the rebar. 
+5. Economic Fundamentals: The 1yr CN yield and1yr US yield reflects the market liquidity and low yield suggests a large liquidity which may drive the commodity price upward. The amount of M1 and M2 also reflects the liquidity of the market. PPI reflects the economics condition. 
 ### Output Description
 Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. Therefore, the output in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. Here, we set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
             ![Image of the Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function(1).png)
