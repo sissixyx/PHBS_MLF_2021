@@ -17,7 +17,9 @@ There are in total 16 features used in the prediction model, which can be catego
 6. The 1yr CN yield and 1yr US yield. It reflects the market liquidity and low yield suggests a large liquidity which may drive the commodity price upward.
 ### Output Description
 Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. Therefore, the output in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. Here, we set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
+
           ![Image of the Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function(1).png)
+
 where r is the output, the change in price of the rebar futures price for the next week. 
 To find the well-built model, our group add another regression model to predict the return of the rebar.
 ## Data Preprocessing
@@ -47,5 +49,26 @@ lr= LogisticRegression(penalty='l2',
                        solver = 'lbfgs',C=0.1,class_weight={0:0.2, 1:0.4,-1:0.4},multi_class='multinomial'
                        )
 ```
-We use l2 regularization and set C at 0.1. Because we care more about the results that indicate we can take some trading actions, we give 1 (long) and -1 (short) more weights in the model and less to 0 (no action). The model is also 
+We use l2 regularization and set C at 0.1. Because we care more about the results that indicate we can take some trading actions, we give 1 (long) and -1 (short) more weights in the model and less to 0 (no action). The model is also set to be metaclassifier because we have three categories in the output.
+### SVM
+```
+svm = SVC(kernel='linear', random_state=0, C=10, gamma=0.01,decision_function_shape='ovr')
+```
+We use the RBF kernel function and set the C at 10, 𝛄 at 0.01.
+### Decision Tree
+```
+tree = DecisionTreeClassifier(criterion='gini',max_depth=5)
+```
+For the decision tree model, we use the gini criteria and set the maximum depth of the tree to 5. 
+### Random Forest
+```
+rf = RandomForestClassifier(n_estimators=10,random_state=0, oob_score=1,criterion='gini')
+```
+For the random forest, we set the number of trees to 20, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
+### GradientBoostingClassifier
+We set 100 classifiers, and the learning rate η as 0.1
+### Regression
 
+## Conclusion
+
+We also think the time problems of the data we collected influence the model results. All the data of the features are weekly. Some of them are published earlier in the week and others later. However, the model treats all the data the same as published in the previous week which may make the prediction less accurate since some data are not most updated. We also use some monthly data and equaly distribute to each week within in the month. This is also another factor that could influence the accuracy of the result. 
