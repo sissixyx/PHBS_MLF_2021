@@ -59,7 +59,6 @@ Based on the goal of the project, we want to use the model to predict the change
 ![Image of Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function%20(2).png)
 
 where r is the output, the change in price of the rebar futures price for the next week. 
-To find the well-built model, our group add another regression model to predict the return of the rebar.
 ## Data Preprocessing
 ### Null data filling
 Our group fills the blanks using the linear interpolation.
@@ -82,18 +81,18 @@ The accuracy test is based on the evaluation metric. As the purpose of the model
 **Note**: all parameters used in the following models have not been optimized yet. Our group will work on it using the cross validation later on. 
 ```
 lr= LogisticRegression(penalty='l2',
-                       solver = 'lbfgs',C=0.1,class_weight={0:0.2, 1:0.4,-1:0.4},multi_class='multinomial'
+                       solver = 'lbfgs',C=C,class_weight={0:0.2, 1:0.4,-1:0.4},multi_class='multinomial'
                        )
 ```
 We use l2 regularization and set C at 0.1. Because we care more about the results that indicate we can take some trading actions, we give 1 (long) and -1 (short) more weights in the model and less to 0 (no action). The model is also set to be metaclassifier because we have three categories in the output.
 ### SVM
 ```
-svm = SVC(kernel='linear', random_state=0, C=10, gamma=0.01,decision_function_shape='ovr')
+svm = SVC(kernel='rbf', random_state=0, C=C, gamma=gamma,decision_function_shape='ovr')
 ```
 We use the RBF kernel function and set the C at 10, 𝛄 at 0.01.
 ### Decision Tree
 ```
-tree = DecisionTreeClassifier(criterion='gini',max_depth=5)
+tree = DecisionTreeClassifier(criterion='gini',max_depth=treedepth)
 ```
 For the decision tree model, we use the gini criteria and set the maximum depth of the tree to 5. 
 ### Random Forest
@@ -102,8 +101,10 @@ rf = RandomForestClassifier(n_estimators=10,random_state=0, oob_score=1,criterio
 ```
 For the random forest, we set the number of trees to 20, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
 ### GradientBoostingClassifier
+```
+gbdt=GradientBoostingClassifier(n_estimators=100,learning_rate=0.1)
+```
 We set 100 classifiers, and the learning rate η as 0.1
-### Regression
 
 ## Conclusion
 
