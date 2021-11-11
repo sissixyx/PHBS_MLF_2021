@@ -33,6 +33,7 @@ rCV_Iron | Real Iron Consumption Volume |
 OR_Iron | Iron Capacity Operating Rate  | 
 CV_Iron | Iron Consumption Volume | 
 rCV_PIron | Real Pig Iron Consumption Volume | 
+CV_PIron| Pig Iron Consumption Volume | 
 rCV_Rebar | Real Rebar Consumption Volume | 
 CV_Rebar | Rebar Consumption Volume | 
 M1 | Money Supply 1 | Includes physical currency, demand deposits, traveler's checks, and other checkable deposits
@@ -62,6 +63,8 @@ where r is the output, the change in price of the rebar futures price for the ne
 ## Data Preprocessing
 ### Null data filling
 Our group fills the blanks using the linear interpolation.
+### Price transformation
+The next preprocessing step is to convert all initial data into wow return data and again input the result as the features.
 ### Dimension reduction
 We used PCA method to reduce the dimensions. Specifically, we are concerned about the multicollinearity between the rebar cost, rebar gross profit, and raw materials’ prices. However, the results turn out that PCA did not significantly reduce the dimensions. Furthermore, the performance of the model after PCA applied is worse than without PCA. Therefore, we did not use PCA in the project. 
 The other method we use is the Random Forest and we picked 40 features according to their importance reflected in the Gini Index.
@@ -74,6 +77,7 @@ The accuracy test is based on the evaluation metric. As the purpose of the model
 - **TrueLongRate:** the rate that the model correctly predicts the long opportunity, supposed to be maximized
 - **FalseLongRate:** the rate that the model predicts the long opportunity but it turns out not to be the case, supposed to be minimized 
 - **CaughtLongRate:** the rate that the long opportunity comes, and the model catches the opportunity, supposed to be maximized
+The accuracy criterion is ``` score=(TrueShortRate-FalseShortRate)*(TrueLongRate-FalseLongRate)``` suggesting if the TrueRate for both short and long are not higher than the FalseRate together, the score will be 0. 
 ### Cross validation 
 
 
@@ -84,22 +88,22 @@ lr= LogisticRegression(penalty='l2',
                        solver = 'lbfgs',C=C,class_weight={0:0.2, 1:0.4,-1:0.4},multi_class='multinomial'
                        )
 ```
-We use l2 regularization and set C at 0.1. Because we care more about the results that indicate we can take some trading actions, we give 1 (long) and -1 (short) more weights in the model and less to 0 (no action). The model is also set to be metaclassifier because we have three categories in the output.
+We use l2 regularization. The optimal parameter C is 14.3 according to the cross validation. Because we care more about the results that indicate we can take some trading actions, we give 1 (long) and -1 (short) more weights in the model and less to 0 (no action). The model is also set to be metaclassifier because we have three categories in the output.
 ### SVM
 ```
 svm = SVC(kernel='rbf', random_state=0, C=C, gamma=gamma,decision_function_shape='ovr')
 ```
-We use the RBF kernel function and set the C at 10, 𝛄 at 0.01.
+We use the RBF kernel function. The optimal parameters calculated from the cross validation are 10.9 for C and 0.01 for 𝛄.
 ### Decision Tree
 ```
 tree = DecisionTreeClassifier(criterion='gini',max_depth=treedepth)
 ```
-For the decision tree model, we use the gini criteria and set the maximum depth of the tree to 5. 
+For the decision tree model, we use the gini criteria and set the maximum depth of the tree to 6 for optimization. 
 ### Random Forest
 ```
-rf = RandomForestClassifier(n_estimators=10,random_state=0, oob_score=1,criterion='gini')
+RF = RandomForestClassifier(n_estimators=RFn,random_state=0, oob_score=1,criterion='gini')
 ```
-For the random forest, we set the number of trees to 20, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
+For the random forest, we set the number of trees to 12 as the optimation choice from the cross validation, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
 ### GradientBoostingClassifier
 ```
 gbdt=GradientBoostingClassifier(n_estimators=100,learning_rate=0.1)
@@ -107,5 +111,11 @@ gbdt=GradientBoostingClassifier(n_estimators=100,learning_rate=0.1)
 We set 100 classifiers, and the learning rate η as 0.1
 
 ## Conclusion
+The following tables show the scores under two accuracy test for each model. 
+![Image of test score](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Test%20Score.png)
+![Image of F1 score](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/CV%20F1%20score.png)
+
+Further we draw a future return of the reabr based on our model
+![Image of return](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Return.png)
 
 We also think the time problems of the data we collected influence the model results. All the data of the features are weekly. Some of them are published earlier in the week and others later. However, the model treats all the data the same as published in the previous week which may make the prediction less accurate since some data are not most updated. We also use some monthly data and equaly distribute to each week within in the month. This is also another factor that could influence the accuracy of the result. 
