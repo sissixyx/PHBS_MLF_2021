@@ -112,6 +112,7 @@ We set 100 classifiers, and the learning rate η as 0.1
 
 ## Conclusion
 The following tables show the scores under two accuracy test for each model. 
+
 **Parameters and scores**
 Model| LR | SVM | Tree | Random Forest | GBDT
 ------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
