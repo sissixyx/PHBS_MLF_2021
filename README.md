@@ -116,7 +116,7 @@ The following tables show the scores under two accuracy test for each model.
 **Parameters and scores**
 Model| LR | SVM | Tree | Random Forest | GBDT
 ------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
-**Para** | C=14.3 | C=10.9, 𝛄=0.01 | Depth=6 | n=12 | n=100, η+0.8
+**Para** | C=14.3 | C=10.9, 𝛄=0.01 | Depth=6 | n=12 | n=100, η=0.8
 **Score** | 0.140625 | 0.02083 | 0 | 0 | 0
 
 **Cross Validation F1 Score**
