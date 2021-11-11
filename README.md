@@ -36,8 +36,8 @@ rCV_PIron | Real Pig Iron Consumption Volume |
 rCV_Rebar | Real Rebar Consumption Volume | 
 CV_Rebar | Rebar Consumption Volume | 
 M1 | Money Supply 1 | Includes physical currency, demand deposits, traveler's checks, and other checkable deposits
-M2 | Money Supply 2 | cash, checking deposits, and easily convertible near money
-PPI | Producer Price Index | measures the average change over time in the selling prices received by domestic producers for their output
+M2 | Money Supply 2 | Cash, checking deposits, and easily convertible near money
+PPI | Producer Price Index | Measures the average change over time in the selling prices received by domestic producers for their output
 CA_REDI | Completed Amount of Real Estate Development Investment | 
 CA_FAI | Completed Amount of Fixed Asset Investment | 
 HCA | Housing Construction Area | 
