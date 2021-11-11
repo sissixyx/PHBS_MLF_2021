@@ -67,7 +67,7 @@ Our group fills the blanks using the linear interpolation.
 The next preprocessing step is to convert all initial data into wow return data and again input the result as the features.
 ### Dimension reduction
 We used PCA method to reduce the dimensions. Specifically, we are concerned about the multicollinearity between the rebar cost, rebar gross profit, and raw materials’ prices. However, the results turn out that PCA did not significantly reduce the dimensions. Furthermore, the performance of the model after PCA applied is worse than without PCA. Therefore, we did not use PCA in the project. 
-The other method we use is the Random Forest and we picked 40 features according to their importance reflected in the Gini Index.
+The other method we use is the Random Forest and we picked 47 features according to their importance reflected in the Gini Index.
 ## Model Training and Predications
 ### Accuracy test 
 The accuracy test is based on the evaluation metric. As the purpose of the model is to support our trading decisions. We care less when the result is 0 and put more focus on the long and short decision. We will calculate the following ratio to test the accuracy of the model:
