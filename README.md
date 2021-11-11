@@ -116,6 +116,7 @@ The following tables show the scores under two accuracy test for each model.
 ![Image of F1 score](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/CV%20F1%20score.png)
 
 Further we draw a future return of the reabr based on our model
+
 ![Image of return](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Return.png)
 
 We also think the time problems of the data we collected influence the model results. All the data of the features are weekly. Some of them are published earlier in the week and others later. However, the model treats all the data the same as published in the previous week which may make the prediction less accurate since some data are not most updated. We also use some monthly data and equaly distribute to each week within in the month. This is also another factor that could influence the accuracy of the result. 
