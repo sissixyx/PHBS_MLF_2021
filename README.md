@@ -112,8 +112,16 @@ We set 100 classifiers, and the learning rate η as 0.1
 
 ## Conclusion
 The following tables show the scores under two accuracy test for each model. 
-![Image of test score](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Test%20Score.png)
-![Image of F1 score](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/CV%20F1%20score.png)
+**Parameters and scores**
+Model| LR | SVM | Tree | Random Forest | GBDT
+------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
+**Para** | C=14.3 | C=10.9, 𝛄=0.01 | Depth=6 | n=12 | n=100, η+0.8
+**Score** | 0.140625 | 0.02083 | 0 | 0 | 0
+
+**Cross Validation F1 Score**
+Model| LR | SVM | Tree | Random Forest | GBDT
+------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
+**Score** | 0.31 | 0.52 | 0.32 | 0.42 | 0.36
 
 Further we draw a future return of the reabr based on our model
 
