@@ -4,6 +4,8 @@ Student Number | Github ID
 ------------ | -------------
 1901212544 | [zxc19960706](https://github.com/zxc19960706)
 1901213243 | [sissixyx](https://github.com/sissixyx)
+
+For all the underlying code, please refer to [this](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/final%20project.ipynb).
 ## Project Introduction
 Reinforcing bar, or rebar, is a common steel bar that is hot rolled and is used widely in the construction industry, especially for concrete reinforcement. Steel rebar is most used as a tensioning device to reinforce concrete and other masonry structures to help hold the concrete in a compressed state. Since it is widely used in the construction, the price of the rebar is an important indicator of the economy health, and it is also commonly traded in the commodity market. The purpose of the project is to estimate the price trend of the rebar futures based on some fundamental data so that we can make the trading strategies accordingly in a low-mid frequency.
 ## Data Description
@@ -55,7 +57,7 @@ There are in total 70 initial features (the list above only shows parts not incl
 4. Economic Fundamentals: The 1yr CN yield and1yr US yield reflects the market liquidity and low yield suggests a large liquidity which may drive the commodity price upward. The amount of M1 and M2 also reflects the liquidity of the market. PPI reflects the economy condition. 
 5. wow change: we also calculate the week-on-week change of each parameter above and fit the model as the input. 
 ### Output Description
-Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. The models include both regression and classification models. The output of in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. For the classfication model, the output is divided into three based on the rebar futures price. We set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
+Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. The models include both regression and classifier models. The output of in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. For the classfication model, the output is divided into three based on the rebar futures price. We set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
 
 ![Image of Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function%20(2).png)
 
@@ -71,6 +73,18 @@ The next preprocessing step is to convert all initial data into wow return data 
 We used PCA method to reduce the dimensions. Specifically, we are concerned about the multicollinearity between the rebar cost, rebar gross profit, and raw materials’ prices. However, the results turn out that PCA did not significantly reduce the dimensions. Furthermore, the performance of the model after PCA applied is worse than without PCA. Therefore, we did not use PCA in the project. 
 
 The other method we use is the Random Forest and we picked 47 features for the classfication models and 13 features for the regression models according to their importance reflected in the Gini Index.
+### Data visualization
+To better illustrate the relationship among the input data, our group visulize the data in the heatmap.
+
+![Image of Correl_All](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Correl_All.png)
+
+The above heatmap shows the correlations among all input data.
+![Image of Correl_All](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Correl_Classfier.png)
+
+The above is the heatmpa of all features selected for the classfier models.
+![Image of Correl_Regression](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Correl_Regression.png)
+
+The above is the heatmap of all features selected for the regression models. 
 ### Accuracy test 
 The accuracy test is based on the evaluation metric. As the purpose of the model is to support our trading decisions. We care less when the result is 0 and put more focus on the long and short decision. We will calculate the following ratio to test the accuracy of the model:
 - **TrueShortRate:** the rate that the model correctly predicts the short opportunity, supposed to be maximized
@@ -79,17 +93,18 @@ The accuracy test is based on the evaluation metric. As the purpose of the model
 - **TrueLongRate:** the rate that the model correctly predicts the long opportunity, supposed to be maximized
 - **FalseLongRate:** the rate that the model predicts the long opportunity but it turns out not to be the case, supposed to be minimized 
 - **CaughtLongRate:** the rate that the long opportunity comes, and the model catches the opportunity, supposed to be maximized
-The accuracy criterion is ``` score=(TrueShortRate-FalseShortRate)*(TrueLongRate-FalseLongRate)``` suggesting if the TrueRate for both short and long are not higher than the FalseRate together, the score will be 0. 
+
+Besides the above rates, we also use the sharpe ratio to determine the results for the classifier models and use the adjusted R-squared to test the regression model. We further use the models to predict 51 nearest weeks' returns to determine which model can earn the highest return.
 ### Cross validation 
-In order to select the optimal parameters for the estimation models. We apply the cross validation and the details is shown below. 
+In order to select the optimal parameters for the prediction models. We apply the cross validation and the details is shown below. 
 
 ```
  RF_score=float(sliding_window_score(100,30,Sharpe,Input,y,RF,30).mean(axis=0))
  ```
- For each validation, we use 100 training samples (100 weeks' data), 30 test samples (30 consequent weeks' data), and move by 30 weeks every next validation test. 
- For the classification models, the cross validation will optimal the sharpe ratio. For the regression models, it aims to minimize the MSE. 
+ For each validation test, we use 100 training samples (100 weeks' data), 30 test samples (30 consequent weeks' data), and move by 30 weeks every next validation test. 
+ For the classifier models, the cross validation will optimal the sharpe ratio. For the regression models, it aims to minimize the MSE. 
 ## Model Training and Predications
-We first use the regression models including linear regression, support vector regression, decision tree regression, random forest regression, and GBDT. Then we continue on the classficiation models. The details are shown below. 
+We first use the classifier models including logistic regression, support vector machine, decision tree, random forest, and GBDT. 
 ### Logistic Regression 
 **Note**: all parameters used in the following models have not been optimized yet. Our group will work on it using the cross validation later on. 
 ```
@@ -115,26 +130,43 @@ RF = RandomForestClassifier(n_estimators=RFn,random_state=0, oob_score=1,criteri
 For the random forest, we set the number of trees to 12 as the optimation choice from the cross validation, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
 ### GradientBoostingClassifier
 ```
-gbdt=GradientBoostingClassifier(n_estimators=100,learning_rate=0.1)
+gbdt=GradientBoostingClassifier(n_estimators=gbdtT_n,learning_rate=gbdtT_l)
 ```
-We set 100 classifiers, and the learning rate η as 0.1
 
+The results of the 5 classifier models are shown in the following table. 
+Model | Logistic Regression | SVM | Decision Tree | Random Forest | GBDT
+------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
+**Optimal parameters** | C = 0.2 | C = 1.1 gamma =0.01 | depth = 46 | n_estimators = 10 | n = 38 eta = 0.7
+**TrueShortRat** | 0.222222222 | nan | 0.15 | 0.25 | 0.216216216
+**TrueShortRat** | 0.222222222 | nan | 0.4 | 0 | 0.297297297
+**CaughtShortRate** | 0.2 | 0 | 0.3 | 0.1 | 0.8
+**TrueLongRate** | nan | nan | 0.25 | nan | 0.25
+**FalseLongRate** | nan | nan | 0.3 | nan | 0.5
+**CaughtLongRate** | 0 | 0 | 0.277777778 | 0 | 0.055555556
+**Best score** | 0.00255473 | 0.019878842 | 0.12518425 | 0.223713943 | 0.019047619
+**Return** | 0.126534799 | 0 | -0.385444816 | 0.079374349 | -0.116343568
+
+The we continue on the regression models using the linear regression, support vector regression, decision tree, random forest, and GBDT. Here, we only show the results. The details of the preocess can be be checked [here](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/final%20project.ipynb).
+**Model** | **Linear Regression** | **SVM** | **Decision Tree** | **Random Forest** | **GBDT**
+------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
+**TrueShortRat** | 0.142857143 | 1 | 1 | 1 | 1
+**TrueShortRat** | 0.380952381 | 0 | 0 | 0 | 0
+**CaughtShortRate** | 0.3 | 0.1 | 0.2 | 0.2 | 1
+**TrueLongRate** | 0 | 0.416666667 | nan | nan | 1
+**FalseLongRate** | 0.375 | 0.083333333 | nan | nan | 0
+**CaughtLongRate** | 0 | 0.277777778 | 0 | 0 | 1
+**Return** | -0.282195759 | 0.359365558 | 0.246258158 | 0.246258158 | 2.449521635
+**R-squared**** | -2.106368939 | -0.002044253 | -0.632814837 | -0.432200872 | -0.380031276
+
+In addition, we drew the 51 nerest weeks predcition results.
+![Image of Results](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Results.png)
+**Note:** The results of the Random Forest and GBDT in both classifier and regression can vary in different tests. 
 ## Conclusion
-The following tables show the scores under two accuracy test for each model. 
+GBDT has bad performance in both classifier and regression models. Decision Trees, Random Forest, and SVM have bad performance in classifier models but relative better in the regression model. Therefore, we think **regression model suits our project better.** The linear regression shows a negative return which indicates the relationship between inputs and the output is not simply linear relationship. 
 
-**Parameters and scores**
-Model| LR | SVM | Tree | Random Forest | GBDT
------------- | -------------  | -------------  | -------------  | -------------  | ------------- 
-**Para** | C=14.3 | C=10.9, 𝛄=0.01 | Depth=6 | n=12 | n=100, η=0.8
-**Score** | 0.140625 | 0.02083 | 0 | 0 | 0
+Another interesting findings is that for models with high positive results such as SVM regression, Random Forest regression, and Decision Tree regression, the number of deals exercised during the 51 weeks is small -  4, 3, 2 times respectively (for details of the testing results for the 51 weeks please refer to [here](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/result.xlsx). We guess, based on the fact, that the model captures find some unusual chances with high certainty and make profits. 
 
-**Cross Validation F1 Score**
-Model| LR | SVM | Tree | Random Forest | GBDT
------------- | -------------  | -------------  | -------------  | -------------  | ------------- 
-**Score** | 0.31 | 0.52 | 0.32 | 0.42 | 0.36
+In the results for the regression models, some R-squred are negative. This is because we use the adjusted R-squared and the negative R-squared means there are too many number of features we use in the model. We can optimize that but since the the running time is too long to find the optimal number of the features. Therefore, we chose 13 features according to the importances and economics basics.  
 
-Further we draw a future return of the reabr based on our model
+We also conlude several reasons why the results of the models are not ideal. First, there are a lot of noises existing in the financial data, making it hard to detect the regular pattern. Second, some important information are obmitted as we did not further process the quantity and price data. Futher researches on the quantity and price index construction are necessary. We also think the time problems of the data we collected influence the model results. All the data of the features are weekly. Some of them are published earlier in the week and others later. However, the model treats all the data the same as published in the previous week which may make the prediction less accurate since some data are not most updated. We also use some monthly data and equaly distribute to each week within in the month. This is also another factor that could influence the accuracy of the result. 
 
-![Image of return](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Return.png)
-
-We also think the time problems of the data we collected influence the model results. All the data of the features are weekly. Some of them are published earlier in the week and others later. However, the model treats all the data the same as published in the previous week which may make the prediction less accurate since some data are not most updated. We also use some monthly data and equaly distribute to each week within in the month. This is also another factor that could influence the accuracy of the result. 
