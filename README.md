@@ -55,11 +55,12 @@ There are in total 70 initial features (the list above only shows parts not incl
 4. Economic Fundamentals: The 1yr CN yield and1yr US yield reflects the market liquidity and low yield suggests a large liquidity which may drive the commodity price upward. The amount of M1 and M2 also reflects the liquidity of the market. PPI reflects the economy condition. 
 5. wow change: we also calculate the week-on-week change of each parameter above and fit the model as the input. 
 ### Output Description
-Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. Therefore, the output in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. Here, we set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
+Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. The models include both regression and classification models. The output of in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. For the classfication model, the output is divided into three based on the rebar futures price. We set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
 
 ![Image of Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function%20(2).png)
 
 where r is the output, the change in price of the rebar futures price for the next week. 
+For the regression model, the output is the rebar futures price return. 
 ## Data Preprocessing
 ### Null data filling
 Our group fills the blanks using the linear interpolation.
@@ -67,7 +68,8 @@ Our group fills the blanks using the linear interpolation.
 The next preprocessing step is to convert all initial data into wow return data and again input the result as the features.
 ### Dimension reduction
 We used PCA method to reduce the dimensions. Specifically, we are concerned about the multicollinearity between the rebar cost, rebar gross profit, and raw materials’ prices. However, the results turn out that PCA did not significantly reduce the dimensions. Furthermore, the performance of the model after PCA applied is worse than without PCA. Therefore, we did not use PCA in the project. 
-The other method we use is the Random Forest and we picked 47 features according to their importance reflected in the Gini Index.
+
+The other method we use is the Random Forest and we picked 47 features for the classfication models and 13 features for the regression models according to their importance reflected in the Gini Index.
 ## Model Training and Predications
 ### Accuracy test 
 The accuracy test is based on the evaluation metric. As the purpose of the model is to support our trading decisions. We care less when the result is 0 and put more focus on the long and short decision. We will calculate the following ratio to test the accuracy of the model:
@@ -79,7 +81,13 @@ The accuracy test is based on the evaluation metric. As the purpose of the model
 - **CaughtLongRate:** the rate that the long opportunity comes, and the model catches the opportunity, supposed to be maximized
 The accuracy criterion is ``` score=(TrueShortRate-FalseShortRate)*(TrueLongRate-FalseLongRate)``` suggesting if the TrueRate for both short and long are not higher than the FalseRate together, the score will be 0. 
 ### Cross validation 
+In order to select the optimal parameters for the estimation models. We apply the cross validation and the details is shown below. 
 
+```
+ RF_score=float(sliding_window_score(100,30,Sharpe,Input,y,RF,30).mean(axis=0))
+ ```
+ For each validation, we use 100 training samples (100 weeks' data), 30 test samples (30 consequent weeks' data), and move by 30 weeks every next validation test. 
+ For the classification models, the cross validation will optimal the sharpe ratio. For the regression models, it aims to minimize the MSE. 
 
 ### Logistic Regression 
 **Note**: all parameters used in the following models have not been optimized yet. Our group will work on it using the cross validation later on. 
