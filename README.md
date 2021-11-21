@@ -60,6 +60,7 @@ Based on the goal of the project, we want to use the model to predict the change
 ![Image of Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function%20(2).png)
 
 where r is the output, the change in price of the rebar futures price for the next week. 
+
 For the regression model, the output is the rebar futures price return. 
 ## Data Preprocessing
 ### Null data filling
