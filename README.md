@@ -50,6 +50,7 @@ PPI_I_yoy | Industrial PPI yoy Increase |
 PPI_I_mom | Industrial PPI mom Increase | 
 
 **Note:** Data below Rebar Futures Price are all monthly data but we use it as the weekly data so that the data for the four weeks within the same month will all equal to the month's data.
+
 There are in total 70 initial features (the list above only shows parts not including the wow change for the data that we will calculate and fit the model as the input). They can be devided into 5 categories. 
 1. Raw materials: the features include the futures price, spot price, consumption volume, and operating rate of the raw materials including iron, ferrosilicon, manganese silicon (Mn-Si), coke, which will influence the output’s price.
 2. Features of Rebar: The cost and gross profit of rebar reflects the cost from electricity and labor. The trading volume and position of the rebar futures reflects whether there is an abnormal change in the trading volume or the position, it suggests the price of the rebar will be volatile. 
@@ -125,12 +126,12 @@ For the decision tree model, we use the gini criteria and set the maximum depth 
 ```
 RF = RandomForestClassifier(n_estimators=RFn,random_state=0, oob_score=1,criterion='gini')
 ```
-For the random forest, we set the number of trees to 10 as the optimation choice from the cross validation, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
+For the random forest, we set the number of trees to 10 as the optimation choice from the cross validation (the optimal parameters are random so it can vary in different trials, here we only show one possibility), and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
 ### GradientBoostingClassifier
 ```
 gbdt=GradientBoostingClassifier(n_estimators=gbdtT_n,learning_rate=gbdtT_l)
 ```
-The optimal number of trees is 38 and the ptimal learning rate is 0.7.
+The optimal number of trees is 38 and the ptimal learning rate is 0.7 (similar to RF, the results of the optimal parameters are random).
 The results of the 5 classifier models are shown in the following table. 
 Model | Logistic Regression | SVM | Decision Tree | Random Forest | GBDT
 ------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
