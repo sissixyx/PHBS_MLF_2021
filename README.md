@@ -71,7 +71,6 @@ The next preprocessing step is to convert all initial data into wow return data 
 We used PCA method to reduce the dimensions. Specifically, we are concerned about the multicollinearity between the rebar cost, rebar gross profit, and raw materials’ prices. However, the results turn out that PCA did not significantly reduce the dimensions. Furthermore, the performance of the model after PCA applied is worse than without PCA. Therefore, we did not use PCA in the project. 
 
 The other method we use is the Random Forest and we picked 47 features for the classfication models and 13 features for the regression models according to their importance reflected in the Gini Index.
-## Model Training and Predications
 ### Accuracy test 
 The accuracy test is based on the evaluation metric. As the purpose of the model is to support our trading decisions. We care less when the result is 0 and put more focus on the long and short decision. We will calculate the following ratio to test the accuracy of the model:
 - **TrueShortRate:** the rate that the model correctly predicts the short opportunity, supposed to be maximized
@@ -89,7 +88,8 @@ In order to select the optimal parameters for the estimation models. We apply th
  ```
  For each validation, we use 100 training samples (100 weeks' data), 30 test samples (30 consequent weeks' data), and move by 30 weeks every next validation test. 
  For the classification models, the cross validation will optimal the sharpe ratio. For the regression models, it aims to minimize the MSE. 
-
+## Model Training and Predications
+We first use the regression models including linear regression, support vector regression, decision tree regression, random forest regression, and GBDT. Then we continue on the classficiation models. The details are shown below. 
 ### Logistic Regression 
 **Note**: all parameters used in the following models have not been optimized yet. Our group will work on it using the cross validation later on. 
 ```
