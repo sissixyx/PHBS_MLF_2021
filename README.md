@@ -74,7 +74,7 @@ We used PCA method to reduce the dimensions. Specifically, we are concerned abou
 
 The other method we use is the Random Forest and we picked 47 features for the classfication models and 13 features for the regression models according to their importance reflected in the Gini Index.
 ### Data visualization
-To better illustrate the relationship among the input data, our group visulize the data in the heatmap.The blue heatmap shows the correlations among all input data.
+To better illustrate the relationship among the input data, our group visulize the data in the heatmap. The blue heatmap shows the correlations among all input data.
 
 ![Image of Correl_All](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Correl_All.png)
 
