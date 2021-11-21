@@ -49,17 +49,17 @@ CHSA | Commercial House Sales Area |
 PPI_I_yoy | Industrial PPI yoy Increase | 
 PPI_I_mom | Industrial PPI mom Increase | 
 
-**Note:** Data below Rebar Futures Price are all monthly data evenly distributed to each week. 
+**Note:** Data below Rebar Futures Price are all monthly data but we use it as the weekly data so that the data for the four weeks within the same month will all equal to the month's data.
 There are in total 70 initial features (the list above only shows parts not including the wow change for the data that we will calculate and fit the model as the input). They can be devided into 5 categories. 
 1. Raw materials: the features include the futures price, spot price, consumption volume, and operating rate of the raw materials including iron, ferrosilicon, manganese silicon (Mn-Si), coke, which will influence the output’s price.
 2. Features of Rebar: The cost and gross profit of rebar reflects the cost from electricity and labor. The trading volume and position of the rebar futures reflects whether there is an abnormal change in the trading volume or the position, it suggests the price of the rebar will be volatile. 
 3. Demand and supply data: The inventory level of the iron ore and the steel reflects the supply demand relationship. The iron ore is the supply of rebar, so its inventory reflects the demand of the rebar. If the inventory level of iron ore is high, the demand of the rebar is high and vise versa. The steel inventory reflects the demand of the rebar. If the steel inventory is low, it suggests the demand for the rebar is high. The downstream data such as the real-estate and fixed investment also reflects the demand of the rebar. 
 4. Economic Fundamentals: The 1yr CN yield and1yr US yield reflects the market liquidity and low yield suggests a large liquidity which may drive the commodity price upward. The amount of M1 and M2 also reflects the liquidity of the market. PPI reflects the economy condition. 
-5. wow change: we also calculate the week-on-week change of each parameter above and fit the model as the input. 
+5. Week-on-week change: we also calculate the week-on-week change of each parameter above and fit the model as the input. 
 ### Output Description
 Based on the goal of the project, we want to use the model to predict the changes of the rebar price the next week. The models include both regression and classifier models. The output of in this project is the change of the rebar futures price (r,%). We then can make trading decisions according to the estimated changes. For the classfication model, the output is divided into three based on the rebar futures price. We set the threshold as 2%. Only when the changes are above the threshold, our corresponding trades are meaningful. If the change is above 2%, we will long the futures. If the change is below -2%, we will short the futures. If the change is between (-2%, 2%), we do not take any actions. The output of our model thus is transferred to the categorical output with three categories: 1, 0, -1. 1 means the change of the futures price next week is higher than 2% and we should long. 0 means the change of the futures price next week is between -2% and 2% and wo do nothing. -1 means the change of the futures price next week is lower than 2% and we should short. The active function is shown below.
 
-![Image of Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Activation%20Function%20(2).png)
+![Image of Activation Function](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Classifier%20Activate.png)
 
 where r is the output, the change in price of the rebar futures price for the next week. 
 
@@ -74,17 +74,16 @@ We used PCA method to reduce the dimensions. Specifically, we are concerned abou
 
 The other method we use is the Random Forest and we picked 47 features for the classfication models and 13 features for the regression models according to their importance reflected in the Gini Index.
 ### Data visualization
-To better illustrate the relationship among the input data, our group visulize the data in the heatmap.
+To better illustrate the relationship among the input data, our group visulize the data in the heatmap.The blue heatmap shows the correlations among all input data.
 
 ![Image of Correl_All](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Correl_All.png)
 
-The above heatmap shows the correlations among all input data.
+The red heatmap of all features selected for the classfier models.
 ![Image of Correl_All](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Correl_Classfier.png)
 
-The above is the heatmpa of all features selected for the classfier models.
+The green heatmap of all features selected for the regression models. 
 ![Image of Correl_Regression](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/Correl_Regression.png)
 
-The above is the heatmap of all features selected for the regression models. 
 ### Accuracy test 
 The accuracy test is based on the evaluation metric. As the purpose of the model is to support our trading decisions. We care less when the result is 0 and put more focus on the long and short decision. We will calculate the following ratio to test the accuracy of the model:
 - **TrueShortRate:** the rate that the model correctly predicts the short opportunity, supposed to be maximized
@@ -102,37 +101,36 @@ In order to select the optimal parameters for the prediction models. We apply th
  RF_score=float(sliding_window_score(100,30,Sharpe,Input,y,RF,30).mean(axis=0))
  ```
  For each validation test, we use 100 training samples (100 weeks' data), 30 test samples (30 consequent weeks' data), and move by 30 weeks every next validation test. 
- For the classifier models, the cross validation will optimal the sharpe ratio. For the regression models, it aims to minimize the MSE. 
+ For the classifier models, the cross validation will optimal the sharpe ratio. For the regression models, it aims to optimize the R-squared. 
 ## Model Training and Predications
 We first use the classifier models including logistic regression, support vector machine, decision tree, random forest, and GBDT. 
 ### Logistic Regression 
-**Note**: all parameters used in the following models have not been optimized yet. Our group will work on it using the cross validation later on. 
 ```
 lr= LogisticRegression(penalty='l2',
                        solver = 'lbfgs',C=C,class_weight={0:0.2, 1:0.4,-1:0.4},multi_class='multinomial'
                        )
 ```
-We use l2 regularization. The optimal parameter C is 14.3 according to the cross validation. Because we care more about the results that indicate we can take some trading actions, we give 1 (long) and -1 (short) more weights in the model and less to 0 (no action). The model is also set to be metaclassifier because we have three categories in the output.
+We use l2 regularization. The optimal parameter C is 0.2 according to the cross validation. Because we care more about the results that indicate we can take some trading actions, we give 1 (long) and -1 (short) more weights in the model and less to 0 (no action). The model is also set to be metaclassifier because we have three categories in the output.
 ### SVM
 ```
 svm = SVC(kernel='rbf', random_state=0, C=C, gamma=gamma,decision_function_shape='ovr')
 ```
-We use the RBF kernel function. The optimal parameters calculated from the cross validation are 10.9 for C and 0.01 for 𝛄.
+We use the RBF kernel function. The optimal parameters calculated from the cross validation are 1.1 for C and 0.01 for 𝛄.
 ### Decision Tree
 ```
 tree = DecisionTreeClassifier(criterion='gini',max_depth=treedepth)
 ```
-For the decision tree model, we use the gini criteria and set the maximum depth of the tree to 6 for optimization. 
+For the decision tree model, we use the gini criteria and set the maximum depth of the tree to 46 for optimization. 
 ### Random Forest
 ```
 RF = RandomForestClassifier(n_estimators=RFn,random_state=0, oob_score=1,criterion='gini')
 ```
-For the random forest, we set the number of trees to 12 as the optimation choice from the cross validation, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
+For the random forest, we set the number of trees to 10 as the optimation choice from the cross validation, and the criterion is also gini. We set the out-of-bag score as true, using out-of-bag samples to estimate the generalization accuracy.
 ### GradientBoostingClassifier
 ```
 gbdt=GradientBoostingClassifier(n_estimators=gbdtT_n,learning_rate=gbdtT_l)
 ```
-
+The optimal number of trees is 38 and the ptimal learning rate is 0.7.
 The results of the 5 classifier models are shown in the following table. 
 Model | Logistic Regression | SVM | Decision Tree | Random Forest | GBDT
 ------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
@@ -146,7 +144,8 @@ Model | Logistic Regression | SVM | Decision Tree | Random Forest | GBDT
 **Best score** | 0.00255473 | 0.019878842 | 0.12518425 | 0.223713943 | 0.019047619
 **Return** | 0.126534799 | 0 | -0.385444816 | 0.079374349 | -0.116343568
 
-The we continue on the regression models using the linear regression, support vector regression, decision tree, random forest, and GBDT. Here, we only show the results. The details of the preocess can be be checked [here](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/final%20project.ipynb).
+### Regression Models
+The we continue on the regression models using the linear regression, support vector regression, decision tree, random forest, and GBDT. Here, we only show the results. The details of the process can be be checked [here](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/final%20project.ipynb).
 **Model** | **Linear Regression** | **SVM** | **Decision Tree** | **Random Forest** | **GBDT**
 ------------ | -------------  | -------------  | -------------  | -------------  | ------------- 
 **TrueShortRat** | 0.142857143 | 1 | 1 | 1 | 1
