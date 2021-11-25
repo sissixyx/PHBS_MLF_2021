@@ -1,5 +1,7 @@
 # Predicting Rebar Futures Price with Low-mid Frequency Data
 For all the underlying code, please refer to [this](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/final%20project.ipynb).
+The link of [input data](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/weekly%20data-EN.xlsx)
+The link of [output data](https://github.com/sissixyx/PHBS_MLF_2021/blob/master/Final%20Project/yields.xlsx)
 ## Team Member
 Student Number | Github ID
 ------------ | -------------
